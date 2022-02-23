@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "0eb2aec9-f0f8-40d9-b0a8-ffe19966e52b",
+		"name": "qainterview.pythonanywhere.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "factorial",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Для корректной проверки рассчитываемого значения была разработана функция getRandomInt т.к. динамическая переменная  $randomInt не позволяет ограничить максимальное значение рандомного числа (по умолчанию 1000)\r",
+							"//При таком значении значение факториала больше 1e+21 и представляется в виде строки\r",
+							"//получение рандомного числа 0-30\r",
+							"function getRandomInt() {\r",
+							"    return Math.floor(Math.random() * (30 - 0 + 1 )) + 0;\r",
+							"}\r",
+							"const randomInt = getRandomInt();\r",
+							"pm.globals.set(\"randomInt\", randomInt);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"const number = pm.globals.get(\"randomInt\");\r",
+							"\r",
+							"//Calculat the factorial of randomNumber\r",
+							"function factorial(n){\r",
+							"    let result = 1;\r",
+							"    while(n){\r",
+							"        result *= n--;\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"//1. Проверка наличия поля answer в ответе\r",
+							"pm.test(\"Body contains 'Answer' string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"answer\");\r",
+							"});\r",
+							"\r",
+							"//2. Проверка времени ответа сервера\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"//3. Проверка статус кода\r",
+							"pm.test(\"Successful request\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//4. Проверка сообщения сервера\r",
+							"pm.test(\"Status message is Ok\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"//5. Проверка правильности расчета факториала (сравнение с расчетным)\r",
+							"pm.test('Factorial value of random number ' + number + ' in the response is equal to calculated', function() {\r",
+							"    pm.expect(jsonData.answer).to.eql(factorial(number));\r",
+							"});\r",
+							"\r",
+							"//6. Проверка Хедеров\r",
+							"pm.test(\"Headers contain a Content-Type string\", function () {\r",
+							"    pm.response.to.be.header(\"Content-Type\", \"application/json\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "number",
+							"value": "{{randomInt}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://qainterview.pythonanywhere.com/factorial",
+					"protocol": "http",
+					"host": [
+						"qainterview",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"factorial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "factorialMin",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//Calculat the factorial of randomNumber\r",
+							"function factorial(n){\r",
+							"    let result = 1;\r",
+							"    while(n){\r",
+							"        result *= n--;\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"//1. Проверка наличия поля answer в ответе\r",
+							"pm.test(\"Body contains 'Answer' string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"answer\");\r",
+							"});\r",
+							"\r",
+							"//2. Проверка времени ответа сервера\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"//3. Проверка статус кода\r",
+							"pm.test(\"Successful request\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//4. Проверка сообщения сервера\r",
+							"pm.test(\"Status message is Ok\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"//5. Проверка правильности расчета факториала (сравнение с расчетным)\r",
+							"pm.test('Factorial value of 0 in the response is equal to calculated', function() {\r",
+							"    pm.expect(jsonData.answer).to.eql(factorial(0));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "number",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://qainterview.pythonanywhere.com/factorial",
+					"protocol": "http",
+					"host": [
+						"qainterview",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"factorial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "factorialMax",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//Calculat the factorial of randomNumber\r",
+							"function factorial(n){\r",
+							"    let result = 1;\r",
+							"    while(n){\r",
+							"        result *= n--;\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"//1. Проверка наличия поля answer в ответе\r",
+							"pm.test(\"Body contains 'Answer' string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"answer\");\r",
+							"});\r",
+							"\r",
+							"//2. Проверка времени ответа сервера\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"//3. Проверка статус кода\r",
+							"pm.test(\"Successful request\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//4. Проверка сообщения сервера\r",
+							"pm.test(\"Status message is Ok\", function () {\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"});\r",
+							"\r",
+							"//5. Проверка правильности расчета факториала (сравнение с расчетным)\r",
+							"pm.test('Factorial value of 989 in the response is equal to calculated', function() {\r",
+							"    pm.expect(jsonData.answer.toExponential(15)).to.eql(factorial(989).toExponential(15));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "number",
+							"value": "989",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://qainterview.pythonanywhere.com/factorial",
+					"protocol": "http",
+					"host": [
+						"qainterview",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"factorial"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
